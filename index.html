@@ -1,421 +1,139 @@
-<!-- wondla-updated.html -->
-<!-- Caption: WondLa — modal player integrated (HLS/MP4/YouTube/iframe support). -->
-<!-- Hashtags: #WondLa #ModalPlayer #HLS #Streaming #TukaramIntegration -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>WondLa — Modal Player Integrated</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-  <!-- hls.js -->
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.1/dist/hls.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cloud TV</title>
+
+  <!-- Logo / Favicon -->
+  <link rel="icon" href="https://static.readdy.ai/image/0ece273271e400e488b9947cb1e99e9a/a79b6f32c71c4ee2094ead0eb9c84c9b.png" />
 
   <style>
-    body { background: #0b0f14; color: #e6eef6; font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }
-    header, footer { background: #071122; }
-    .season-btn.active { background:#ffd166 !important; color:#081017 !important; }
-    .movie-card { background: #071627; border:1px solid rgba(255,255,255,0.03); transition: transform .25s ease, box-shadow .25s ease; }
-    .movie-card:hover { transform: translateY(-6px); box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
-    .modal-overlay { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.85); z-index:1000; opacity:0; visibility:hidden; transition: all .25s ease; }
-    .modal-overlay.active { opacity:1; visibility:visible; }
-    .modal-card { width:95%; max-width:1100px; border-radius:10px; overflow:hidden; background:linear-gradient(180deg,#071122,#0b1220); box-shadow:0 20px 60px rgba(0,0,0,0.7); }
-    .modal-player { position:relative; padding-bottom:56.25%; height:0; background:black; }
-    .modal-player video, .modal-player iframe { position:absolute; inset:0; width:100%; height:100%; }
-    .progress-bar { height:4px; background: rgba(255,255,255,0.06); position: relative; }
-    .progress-fill { position:absolute; left:0; top:0; bottom:0; width:0%; background:#ffd166; transition: width .2s linear; }
-    .play-btn { background:#ffd166; color:#071017; }
-    @media (max-width:640px){ .modal-card{ width:98%; } .movie-card img{ height:220px; } }
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #0b0b0b;
+      color: #fff;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: #111;
+      border-bottom: 1px solid #222;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header img {
+      height: 42px;
+      width: auto;
+    }
+
+    header span {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    main {
+      padding: 16px;
+      max-width: 1400px;
+      margin: auto;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: #000;
+      border: 1px solid #222;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform .2s ease, box-shadow .2s ease;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 24px rgba(0,0,0,.6);
+    }
+
+    .logo {
+      height: 110px;
+      background: #fff;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .title {
+      padding: 8px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      background: #0f0f0f;
+      border-top: 1px solid #222;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      opacity: .7;
+    }
   </style>
 </head>
-<body class="min-h-screen">
+<body>
 
-<header class="sticky top-0 z-50 bg-black/60 backdrop-blur-md border-b border-slate-700/20">
-  <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-    <div class="flex items-center space-x-3">
-      <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
-        <i class="fas fa-globe text-white text-2xl"></i>
-      </div>
-      <div>
-        <h1 class="text-2xl font-bold">WondLa</h1>
-        <div class="text-xs text-slate-300">Animated Series • Seasons 1–3</div>
-      </div>
-    </div>
-
-    <div class="flex items-center gap-3">
-      <div class="hidden md:block">
-        <input id="search-input" type="search" placeholder="Search episodes..." class="rounded-full px-3 py-2 bg-slate-900 text-slate-100 border border-slate-800" />
-      </div>
-      <button id="open-search-mobile" class="md:hidden p-2 rounded-full bg-slate-800"><i class="fas fa-search text-white"></i></button>
-    </div>
-  </div>
+<header>
+  <img src="https://static.readdy.ai/image/0ece273271e400e488b9947cb1e99e9a/a79b6f32c71c4ee2094ead0eb9c84c9b.png" alt="Cloud TV" />
+  <span>Cloud TV</span>
 </header>
 
-<main class="container mx-auto px-4 py-8">
-  <section class="mb-6">
-    <div class="rounded-lg overflow-hidden bg-gradient-to-r from-slate-900 to-slate-800 p-6">
-      <h2 class="text-xl font-semibold">WondLa — Adventures on Orbona</h2>
-      <p class="text-slate-300 mt-2">Follow Eva’s journey across the world of Orbona as she discovers humanity’s past, present, and future.</p>
-    </div>
-  </section>
-
-  <section class="mb-6">
-    <div class="flex gap-2 overflow-x-auto pb-2">
-      <button class="season-btn active px-4 py-2 rounded-full bg-slate-800 hover:bg-slate-700 transition" data-season="all">All Episodes</button>
-      <button class="season-btn px-4 py-2 rounded-full bg-slate-800 hover:bg-slate-700 transition" data-season="1">Season 1</button>
-      <button class="season-btn px-4 py-2 rounded-full bg-slate-800 hover:bg-slate-700 transition" data-season="2">Season 2</button>
-      <button class="season-btn px-4 py-2 rounded-full bg-slate-800 hover:bg-slate-700 transition" data-season="3">Season 3</button>
-    </div>
-  </section>
-
-  <section>
-    <h3 class="text-lg font-medium mb-4">Episodes</h3>
-    <div id="movies" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
-  </section>
+<main>
+  <div id="loading" class="loading">Loading channels...</div>
+  <div id="channels" class="grid"></div>
 </main>
 
-<!-- Footer / Social -->
-  <div class="border-t border-gray-800 mt-8 pt-6 text-center text-gray-500">
-    <a href="#" class="text-gray-400 hover:text-[#c0392b] transition px-2"><i class="fab fa-facebook-f"></i></a>
-    <a href="#" class="text-gray-400 hover:text-[#c0392b] transition px-2"><i class="fab fa-twitter"></i></a>
-    <a href="https://www.instagram.com/stark_4152" class="text-gray-400 hover:text-[#c0392b] transition px-2"><i class="fab fa-instagram"></i></a>
-    <a href="https://www.youtube.com/channel/UCYwTAs1PRVHbq4LnCHEEicw" class="text-gray-400 hover:text-[#c0392b] transition px-2"><i class="fab fa-youtube"></i></a>
-  </div>
-
-<!-- =========================
-     Modal Player (Hawkeye-style integration)
-     ========================= -->
-<div id="playback-modal" class="modal-overlay" aria-hidden="true">
-  <div class="modal-card">
-    <div class="flex justify-between items-center p-3 border-b border-slate-800">
-      <div>
-        <div id="modal-title" class="text-white font-semibold"></div>
-        <div id="modal-meta" class="text-sm text-slate-400 mt-1"></div>
-      </div>
-      <div class="flex items-center gap-3">
-        <button id="watchlist-toggle" class="px-3 py-1 rounded bg-slate-800 text-slate-200 hidden md:inline-flex"><i class="fas fa-bookmark mr-2"></i>Watchlist</button>
-        <button id="close-playback" class="p-2 rounded-full bg-slate-800 text-white"><i class="fas fa-times"></i></button>
-      </div>
-    </div>
-
-    <div id="modal-player" class="modal-player">
-      <!-- video or iframe will be injected here; default <video> present for JS to attach HLS -->
-      <video id="modal-video" controls playsinline preload="metadata"></video>
-    </div>
-
-    <div id="video-progress" class="progress-bar">
-      <div id="progress-fill" class="progress-fill"></div>
-    </div>
-
-    <div class="p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-      <div>
-        <p id="modal-description" class="text-slate-300 text-sm"></p>
-      </div>
-      <div class="flex items-center gap-3">
-        <button id="modal-play-btn" class="play-btn px-4 py-2 rounded-full font-semibold flex items-center"><i class="fas fa-play mr-2"></i><span id="modal-play-text">Play</span></button>
-        <button id="modal-details-btn" class="px-4 py-2 rounded-full bg-slate-800 text-slate-200 hidden md:inline-flex"><i class="fas fa-info-circle mr-2"></i>Details</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Loading spinner -->
-<div id="loading-spinner" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 hidden">
-  <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-yellow-500"></div>
-</div>
-
 <script>
-const movies = [
-  // --- SEASON 1 ---
-  { title:"Doors", season:1, episode:1, video:"https://soq.goldenmeadowlearning.sbs:443/v4/us/uyk6bd/index-f1-v1-a1.txt", image:"https://m.media-amazon.com/images/S/pv-target-images/df9d65a374a436b71648a8c844aa352a3d677a5436e362023af0e62bbb13a12e._BR-6_AC_SX720_FMwebp_.jpg" },
+fetch('./channels.json')
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById('loading').style.display = 'none';
+    const grid = document.getElementById('channels');
 
-  { title:"Lifeforms", season:1, episode:2, video:"https://sr81.zenitharchitecture.site/v4/m9/vyvtf/index-f1-v1-a1.txt", image:"https://m.media-amazon.com/images/S/pv-target-images/c020719c46943c6ef124eba57d1e518c6a3264454c8f6bd876961ddf5b6f98b0._BR-6_AC_SX720_FMwebp_.jpg" },
+    data.forEach(ch => {
+      const card = document.createElement('div');
+      card.className = 'card';
 
-  { title:"Bargain", season:1, episode:3, video:"https://sj3l.blueridgecreatives.store/v4/ek/i9igk/index-f1-v1-a1.txt", image:"https://m.media-amazon.com/images/S/pv-target-images/4d15fe3179cc07df205c593d95785e3e04b93206058b95d39768e024972fad31._BR-6_AC_SX720_FMwebp_.jpg" },
-
-  { title:"Ghosts", season:1, episode:4, video:"https://sdqm.zenlithsustainables.cyou:443/v4/m9/eke6o/index-f2-v1-a1.txt", image:"https://m.media-amazon.com/images/S/pv-target-images/b382da394b710a5c2ed31828a54ab07c9e6701f6ae9ca15ac974e5b4fb7f0feb._BR-6_AC_SX720_FMwebp_.jpg" },
-
-  { title:"Captive", season:1, episode:5, video:"https://sdqm.viatrixartstudio.space/v4/rw/msmbu/index-f2-v1-a1.txt", image:"https://m.media-amazon.com/images/S/pv-target-images/72d81aedd78ea05623001edef5d913934c3a0f0810a10aa081065eaeb98d85d7._BR-6_AC_SX720_FMwebp_.jpg" },
-
-  { title:"Bridge", season:1, episode:6, video:"https://sxic.amberlineproductions.shop/v4/vz/pdphc/index-f1-v1-a1.txt", image:"https://m.media-amazon.com/images/S/pv-target-images/2b457b89bad2479fc676314aa2a118cc20d378694df583cd8425416fd3f94f05._BR-6_AC_SX720_FMwebp_.jpg" },
-
-  { title:"Ruins", season:1, episode:7, video:"https://sskt.aqualisnetworkmedia.store:443/v4/m9/r3ro1/index-f2-v1-a1.txt", image:"https://m.media-amazon.com/images/S/pv-target-images/61f0b6d4931e212586f2a720f0cb38bba2e8a555fe8367f8defa8fc1b3175db6._BR-6_AC_SX720_FMwebp_.jpg" },
-
-  // --- SEASON 2 ---
-  { title:"Home", season:2, episode:1, video:"https://spx.lakeshorecreativeworks.space:443/v4/5w3/afdc3p/index-f2-v1-a1.txt", image:"https://m.media-amazon.com/images/S/pv-target-images/eb96e99f73465d4fcc97a1f36139e8a6e96b36e6a6e18b69bd9cfb5d2df81c43._BR-6_AC_SX720_FMwebp_.jpg" },
-
-  { title:"Family", season:2, episode:2, video:"https://syr.harbortowninnovation.store:443/v4/miy/ie9poj/index-f2-v1-a1.txt", image:"https://m.media-amazon.com/images/S/pv-target-images/04f96a32c3055c7fe47d006191a936f222e8469c179a3809dcbd781437bd1344._BR-6_AC_SX720_FMwebp_.jpg" },
-
-  { title:"Discovery", season:2, episode:3, video:"https://vip.opstream17.com:443/20250510/18250_d40c4b6c/3000k/hls/mixed.m3u8", image:"https://m.media-amazon.com/images/S/pv-target-images/65f2cd89b134bde1fd10f26276b3c6715b89d8466baf56f2335a57a7b995c30d._BR-6_AC_SX720_FMwebp_.jpg" },
-
-  { title:"Lesson", season:2, episode:4, video:"https://s39.aurorionconsulting.cfd:443/v4/jcp/vicqyo/index-f1-v1-a1.txt", image:"https://m.media-amazon.com/images/S/pv-target-images/61acd7aa12a553dcb086c098619869df8483506d6ad4197cefd5c36ef6258cae._BR-6_AC_SX720_FMwebp_.jpg" },
-
-  { title:"Truth", season:2, episode:5, video:"https://snq.azurafield.space:443/v4/jcp/r51dz3/index-f2-v1-a1.txt", image:"https://m.media-amazon.com/images/S/pv-target-images/3d203b94bb63b33b0de3a23f37cd252eead72728c14017d36c368ff08d290940._BR-6_AC_SX720_FMwebp_.jpg" },
-
-  { title:"Connection", season:2, episode:6, video:"https://s36.arkadine.shop:443/v4/5w3/yolm95/index-f2-v1-a1.txt", image:"https://m.media-amazon.com/images/S/pv-target-images/66bbac616dbaa6aba65ce3db7252cc348f94a236c271aace3855d91e67dd2416._BR-6_AC_SX720_FMwebp_.jpg" },
-
-  { title:"Heart", season:2, episode:7, video:"https://sq3.lakeshorecreativeworks.space:443/v4/5w3/klxuaj/index-f1-v1-a1.txt", image:"https://m.media-amazon.com/images/S/pv-target-images/4957d82410ad8896a66c68260d9b8756434a43fd2db4a905acf2f1c7fe9dbecc._BR-6_AC_SX720_FMwebp_.jpg" },
-
- // --- SEASON 3 ---
-  { title:"Rise", season:3, episode:1, video:"https://s36.goldenharborcreative.cfd:443/v4/urp/qpvefq/index-f1-v1-a1.txt", image:"https://m.media-amazon.com/images/S/pv-target-images/8120d70708f00c6d761ba2c6407a3c1dd8e293739a6b69914ec1873a84ba0613._BR-6_AC_SX720_FMwebp_.jpg" },
-
-  { title:"Return", season:3, episode:2, video:"https://sau.fiorellagarden.sbs:443/v4/x6b/hdt5xe/index-f2-v1-a1.txt", image:"https://m.media-amazon.com/images/S/pv-target-images/7b1a9a45e6d66a8dbde177e3ef14fe84989428fdfad9087fc2f11ceeb4a3c589._BR-6_AC_SX720_FMwebp_.jpg" },
-
-  { title:"Mission", season:3, episode:3, video:"https://s39.cosmavision.shop:443/v4/x6b/5ahb1u/index-f2-v1-a1.txt", image:"https://m.media-amazon.com/images/S/pv-target-images/a566f33c7dbe30797aedbebe5c0880afd6291749299a8f9a220c6fc10fd5d5a6._BR-6_AC_SX720_FMwebp_.jpg" },
-
-  { title:"Monsters", season:3, episode:4, video:"https://soq.starlabdigital.sbs:443/v4/miy/njezhu/index-f2-v1-a1.txt", image:"https://m.media-amazon.com/images/S/pv-target-images/2837eb74dc8ce759ee1332fa1a5611717a39da1b6ff0b54d27a52897dd1deb96._BR-6_AC_SX720_FMwebp_.jpg" },
-
-  { title:"Lost", season:3, episode:5, video:"https://s36.brightcrestshop.shop:443/v4/urp/3uwljt/index-f2-v1-a1.txt", image:"https://m.media-amazon.com/images/S/pv-target-images/bf1c1ae4ca4f3426aaddc1c95806ed855da7d52490142aa8fe93a95e35c7e3f0._BR-6_AC_SX720_FMwebp_.jpg" },
-
-  { title:"Wondla", season:3, episode:6, video:"https://s36.aurorionventures.space:443/v4/jcp/yolm5b/index-f2-v1-a1.txt", image:"https://m.media-amazon.com/images/S/pv-target-images/3f58ba13e00a69e171e3d756cdcb6a1ac5380ac77c8f6686b2768e1710d2e5a9._BR-6_AC_SX720_FMwebp_.jpg" },
-
-];
-
-/* DOM references */
-const container = document.getElementById('movies');
-const searchInput = document.getElementById('search-input');
-const seasonBtns = document.querySelectorAll('.season-btn');
-
-/* Modal elements */
-const playbackModal = document.getElementById('playback-modal');
-const closePlayback = document.getElementById('close-playback');
-const modalPlayer = document.getElementById('modal-player');
-const modalVideo = () => document.getElementById('modal-video');
-const modalTitle = document.getElementById('modal-title');
-const modalMeta = document.getElementById('modal-meta');
-const modalDescription = document.getElementById('modal-description');
-const modalPlayBtn = document.getElementById('modal-play-btn');
-const modalPlayText = document.getElementById('modal-play-text');
-const progressFill = document.getElementById('progress-fill');
-const loadingSpinner = document.getElementById('loading-spinner');
-let currentHls = null;
-let currentIndex = null;
-
-/* helpers to detect stream type (robust to .txt HLS playlists too) */
-function isHls(u){
-  if(!u) return false;
-  return u.includes('.m3u8') || u.includes('index-') || /index.*\.txt/i.test(u) || u.toLowerCase().includes('master.m3u8') || u.includes('manifest');
-}
-function isMP4(u){ return /\.mp4($|\?)/i.test(u||''); }
-function isYouTube(u){ return !!(u && (u.includes('youtube.com') || u.includes('youtu.be') || u.includes('youtube-nocookie.com') || u.includes('/embed/'))); }
-
-/* reset player container to a clean <video> element & destroy hls if present */
-function resetPlayerContainer(){
-  if(currentHls){
-    try{ currentHls.destroy(); }catch(e){}
-    currentHls = null;
-  }
-  modalPlayer.innerHTML = `<video id="modal-video" controls playsinline preload="metadata"></video>`;
-}
-
-/* attach listeners to <video> element for UI updates */
-function attachVideoListeners(){
-  const v = modalVideo();
-  if(!v) return;
-  v.removeAttribute('data-listener-attached');
-  v.addEventListener('timeupdate', () => {
-    if(!v.duration || !isFinite(v.duration)) return;
-    const perc = (v.currentTime / v.duration) * 100;
-    progressFill.style.width = perc + '%';
-  });
-  v.addEventListener('play', () => {
-    modalPlayBtn.innerHTML = '<i class="fas fa-pause mr-2"></i><span id="modal-play-text">Pause</span>';
-  });
-  v.addEventListener('pause', () => {
-    modalPlayBtn.innerHTML = '<i class="fas fa-play mr-2"></i><span id="modal-play-text">Play</span>';
-  });
-  v.addEventListener('ended', () => {
-    modalPlayBtn.innerHTML = '<i class="fas fa-redo mr-2"></i><span id="modal-play-text">Replay</span>';
-  });
-}
-
-/* open / close modal helpers */
-function showModal(){ playbackModal.classList.add('active'); document.body.style.overflow='hidden'; }
-function hideModal(){ playbackModal.classList.remove('active'); document.body.style.overflow=''; }
-
-/* close & cleanup */
-function closePlaybackHandler(){
-  if(currentHls){ try{ currentHls.destroy(); }catch(e){} currentHls = null; }
-  const v = modalVideo();
-  if(v){
-    try{ v.pause(); }catch(e){} 
-    try{ v.removeAttribute('src'); v.load(); }catch(e){}
-  }
-  resetPlayerContainer();
-  progressFill.style.width = '0%';
-  currentIndex = null;
-  hideModal();
-  modalPlayBtn.innerHTML = '<i class="fas fa-play mr-2"></i><span id="modal-play-text">Play</span>';
-}
-
-/* main playback function - supports iframe hosts, YouTube, HLS, MP4, fallback to player.html */
-function playInModal(title, url, movie = {}, index = null){
-  currentIndex = index;
-  modalTitle.textContent = movie.title || title || 'Playback';
-  modalDescription.textContent = movie.description || '';
-  modalMeta.textContent = (movie.year ? movie.year + ' • ' : '') + (movie.duration ? movie.duration : '');
-  progressFill.style.width = '0%';
-  modalPlayBtn.innerHTML = '<i class="fas fa-play mr-2"></i><span id="modal-play-text">Play</span>';
-
-  if(!url){
-    modalDescription.textContent = 'No playable URL provided.';
-    showModal();
-    return;
-  }
-
-  // Hosts better served via iframe
-  const iframeHosts = ['streamtape.com','openload.co','vidcdn.','dood.', 'sbembed', 'drive.google.com','mega.nz','streamlare','mixdrop','rapidvideo'];
-  if(iframeHosts.some(h => url.includes(h))){
-    modalPlayer.innerHTML = `<iframe src="${url}" width="100%" height="100%" allowfullscreen allow="autoplay; encrypted-media" frameborder="0"></iframe>`;
-    showModal();
-    return;
-  }
-
-  // YouTube -> embed
-  if(isYouTube(url)){
-    try{
-      let embedUrl = url;
-      if(url.includes('watch') && url.includes('v=')){
-        const vid = new URLSearchParams(url.split('?')[1]).get('v');
-        if(vid) embedUrl = `https://www.youtube.com/embed/${vid}`;
-      } else if(url.includes('youtu.be/')){
-        const vid = url.split('youtu.be/')[1].split(/[?&]/)[0];
-        embedUrl = `https://www.youtube.com/embed/${vid}`;
-      }
-      modalPlayer.innerHTML = `<iframe src="${embedUrl}?autoplay=1&modestbranding=1&rel=0" width="100%" height="100%" allowfullscreen allow="autoplay; encrypted-media" frameborder="0"></iframe>`;
-      showModal();
-      return;
-    }catch(e){
-      // fallback to next checks
-    }
-  }
-
-  // Ensure we have a <video> element
-  resetPlayerContainer();
-  const v = modalVideo();
-
-  // HLS handling (including .txt index playlists)
-  if(isHls(url)){
-    if(window.Hls && Hls.isSupported()){
-      currentHls = new Hls();
-      currentHls.loadSource(url);
-      currentHls.attachMedia(v);
-      currentHls.on(Hls.Events.MANIFEST_PARSED, () => {
-        showModal();
-        attachVideoListeners();
-        v.play().catch(()=>{});
-      });
-      currentHls.on(Hls.Events.ERROR, (event, data) => {
-        // If fatal error, attempt to fallback to direct src or redirect
-        if(data && data.fatal){
-          try{ currentHls.destroy(); }catch(e){}
-          currentHls = null;
-          v.src = url;
-          showModal();
-          v.play().catch(()=>{});
-          attachVideoListeners();
+      card.onclick = () => {
+        if (ch.id) {
+          location.href = `player.html?id=${ch.id}`;
+        } else {
+          location.href = `player.html?url=${encodeURIComponent(ch.url)}&keyId=${ch.keyId}&key=${ch.key}`;
         }
-      });
-    } else {
-      // Safari native HLS support
-      v.src = url;
-      showModal();
-      attachVideoListeners();
-      v.play().catch(()=>{});
-    }
-    return;
-  }
+      };
 
-  // MP4 fallback
-  if(isMP4(url)){
-    v.src = url;
-    showModal();
-    attachVideoListeners();
-    v.play().catch(()=>{});
-    return;
-  }
+      card.innerHTML = `
+        <div class="logo" style="background-image:url('${ch.image || ''}')"></div>
+        <div class="title">${ch.title || 'Live Channel'}</div>
+      `;
 
-  // Unknown type -> fallback to player.html (preserve prior app behavior)
-  window.location.href = `player.html?title=${encodeURIComponent(title)}&video=${encodeURIComponent(url)}`;
-}
-
-/* play/pause button logic */
-modalPlayBtn.addEventListener('click', () => {
-  const v = modalVideo();
-  if(!v) return;
-  // if iframe is present (no video element), do nothing special
-  if(!v.src && modalPlayer.querySelector('iframe')) return;
-  if(v.paused){
-    v.play().catch(()=>{});
-  } else {
-    v.pause();
-  }
-});
-
-/* modal close handlers */
-closePlayback.addEventListener('click', closePlaybackHandler);
-playbackModal.addEventListener('click', (e) => { if(e.target === playbackModal) closePlaybackHandler(); });
-
-/* utility to render episode cards (movies array currently empty) */
-function renderMovies(list){
-  container.innerHTML = '';
-  if(!list || list.length === 0){
-    container.innerHTML = `<div class="col-span-full text-center text-slate-400 py-20">No episodes available — paste your episodes array into <code>const movies = []</code>.</div>`;
-    return;
-  }
-  list.forEach((m, idx) => {
-    const div = document.createElement('div');
-    div.className = 'movie-card rounded-lg overflow-hidden cursor-pointer';
-    div.innerHTML = `
-      <div class="relative">
-        <img src="${m.image || ''}" alt="${m.title || 'Episode'}" class="w-full h-60 object-cover">
-        <div class="absolute inset-0 flex items-end p-3 bg-gradient-to-t from-black/60">
-          <button class="bg-yellow-400 text-black px-3 py-1 rounded">Play</button>
-        </div>
-      </div>
-      <div class="p-3">
-        <div class="font-semibold">${m.title || 'Untitled'}</div>
-        <div class="text-sm text-slate-400">Season ${m.season || '-'} • Episode ${m.episode || '-'}</div>
-      </div>`;
-    div.addEventListener('click', () => {
-      // show spinner while preparing player
-      loadingSpinner.classList.remove('hidden');
-      // short timeout to ensure spinner shows if hls loads fast
-      setTimeout(() => {
-        try{ playInModal(m.title, m.video, m, idx); } finally { loadingSpinner.classList.add('hidden'); }
-      }, 150);
+      grid.appendChild(card);
     });
-    container.appendChild(div);
+  })
+  .catch(err => {
+    document.getElementById('loading').innerText = 'Failed to load channels';
+    console.error(err);
   });
-}
-
-/* initial render */
-renderMovies(movies);
-
-/* season filter */
-seasonBtns.forEach(btn => btn.addEventListener('click', () => {
-  seasonBtns.forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  const season = btn.dataset.season;
-  const filtered = season === 'all' ? movies : movies.filter(m => String(m.season) === String(season));
-  renderMovies(filtered);
-}));
-
-/* search */
-searchInput && searchInput.addEventListener('input', (e) => {
-  const q = e.target.value.trim().toLowerCase();
-  const activeSeasonBtn = document.querySelector('.season-btn.active');
-  const season = activeSeasonBtn ? activeSeasonBtn.dataset.season : 'all';
-  let list = season === 'all' ? movies : movies.filter(m => String(m.season) === String(season));
-  if(q) list = list.filter(m => (m.title||'').toLowerCase().includes(q));
-  renderMovies(list);
-});
-
-/* expose helper for console testing */
-window.playInModal = playInModal;
-window.closePlaybackHandler = closePlaybackHandler;
 </script>
+
 </body>
 </html>
