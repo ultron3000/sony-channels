@@ -10,7 +10,7 @@
             
             if (!streamId) return;
             
-            fetch('https://raw.githubusercontent.com/cinearena/json/main/toffee.json')
+            fetch('channels.json')
                 .then(response => response.json())
                 .then(data => {
                     const streamInfo = data.find(item => item.id === streamId);
