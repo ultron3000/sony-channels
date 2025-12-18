@@ -122,7 +122,7 @@ fetch('./channels.json')
       };
 
       card.innerHTML = `
-        <div class="logo" style="background-image:url('${ch.image || ''}')"></div>
+        <div class="logo" style="background-image:url('${ch.logo || ''}')"></div>
         <div class="title">${ch.title || 'Live Channel'}</div>
       `;
 
