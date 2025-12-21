@@ -1,154 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cloud TV Player</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
-<style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  height: 100vh;
-  width: 100vw;
-  background: #000;
-  font-family: 'Inter', system-ui, sans-serif;
-  overflow: hidden;
-}
-
-/* ===== PLAYER CONTAINER ===== */
-.player {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  background: #000;
-}
-
-/* ===== IFRAME ===== */
-iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  background: #000;
-}
-
-/* ===== TOP BAR ===== */
-.top-bar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  padding: 0 16px;
-  background: linear-gradient(
-    to bottom,
-    rgba(0,0,0,.85),
-    rgba(0,0,0,.25),
-    transparent
-  );
-  backdrop-filter: blur(10px);
-  z-index: 10;
-}
-
-.top-bar span {
-  font-size: 15px;
-  font-weight: 600;
-  opacity: .9;
-}
-
-/* ===== LOADING OVERLAY ===== */
-.loading {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at center, #050509, #000);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 20;
-  transition: opacity .5s ease;
-}
-
-.loading span {
-  font-size: 14px;
-  opacity: .8;
-  letter-spacing: .4px;
-}
-
-/* Hide loading */
-.loading.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* ===== MOBILE SAFE AREA ===== */
-@supports(padding: max(0px)) {
-  .top-bar {
-    padding-top: max(env(safe-area-inset-top), 12px);
-    height: calc(56px + env(safe-area-inset-top));
-  }
-}
-</style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const streamId = urlParams.get('id');
-    
-    if (!streamId) return;
-    
-    fetch('channels.json')
-        .then(response => response.json())
-        .then(data => {
-            const streamInfo = data.find(item => item.id === streamId);
-            if (!streamInfo) return;
+</script> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>Cloud TV</title> 
+  <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const streamId = urlParams.get('id');
             
-            const iframe = document.getElementById('stream-iframe');
-            const loading = document.getElementById('loading');
-            const title = document.getElementById('title');
-
-            if (streamInfo.title) {
-                const key = encodeURIComponent(streamInfo.id);
-                iframe.src = `https://www.livereacting.com/tools/hls-player-embed?url=https://allottplay.com/tv/toffee/live.php?id=${key}&e=.m3u8`;
-                title.textContent = streamInfo.title;
-            } 
-            else if (streamInfo.m3u8) {
-                iframe.src = streamInfo.m3u8;
-                title.textContent = streamInfo.title || 'Live Stream';
-            }
-
-            iframe.onload = () => {
-              loading.classList.add('hidden');
-            };
+            if (!streamId) return;
+            
+            fetch('channels.json')
+                .then(response => response.json())
+                .then(data => {
+                    const streamInfo = data.find(item => item.id === streamId);
+                    if (!streamInfo) return;
+                    
+                    const iframe = document.getElementById('stream-iframe');
+                    if (streamInfo.title) 
+                    {const key = encodeURIComponent(streamInfo.id); iframe.src=`https://www.livereacting.com/tools/hls-player-embed?url=https://allottplay.com/tv/toffee/live.php?id=${key}&e=.m3u8`;
+                    } else if (streamInfo.m3u8) {
+                        iframe.src = streamInfo.m3u8;
+                    }
+                });
         });
-});
-</script>
-</head>
-
-<body>
-
-<div class="player">
-  <div class="top-bar">
-    <span id="title">Loading…</span>
-  </div>
-
-  <div id="loading" class="loading">
-    <span>Loading stream…</span>
-  </div>
-
-  <iframe
-    id="stream-iframe"
-    allow="autoplay; fullscreen"
-    allowfullscreen>
-  </iframe>
-</div>
-
-</body>
+    </script> 
+ </head> 
+ <body style="position:absolute;margin: 0; padding: 0; height: 100%;width:100%;background:#000"> 
+  <iframe id="stream-iframe" style="width: 100%; height: 100%; border: none;" allow="autoplay; fullscreen" allowfullscreen></iframe> 
+ </body>
 </html>
