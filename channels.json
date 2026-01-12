@@ -1,5 +1,32 @@
 [ 
   {
+  "id": "SonyLIV Sports 1",
+  "title": "SonyLIV Sports 1",
+  "image": "https://jiotv.catchup.cdn.jio.com/dare_images/images/SonyLIV_Sports_1.png",
+  "url": "https://jiotvpllive.cdn.jio.com/bpk-tv/SonyLIV_Sports_1_MOB/WDVLive/index.mpd",
+  "keyId": "4e4c5dba5bfe5a7c9338bc086eb80379",
+  "key": "b8e8932f440084e1d2b705fa52eef94b",
+  "category": "Sports"
+},
+{
+  "id": "SonyLIV Sports 2",
+  "title": "SonyLIV Sports 2",
+  "image": "https://jiotv.catchup.cdn.jio.com/dare_images/images/SonyLIV_Sports_2.png",
+  "url": "https://jiotvpllive.cdn.jio.com/bpk-tv/SonyLIV_Sports_2_MOB/WDVLive/index.mpd",
+  "keyId": "ef24516ae38b50d18049343cd1cd998a",
+  "key": "eb4810ec250a1795a0019dba7881ff45",
+  "category": "Sports"
+},
+{
+  "id": "SonyLIV Sports 3",
+  "title": "SonyLIV Sports 3",
+  "image": "https://jiotv.catchup.cdn.jio.com/dare_images/images/SonyLIV_Sports_3.png",
+  "url": "https://jiotvpllive.cdn.jio.com/bpk-tv/SonyLIV_Sports_3_MOB/WDVLive/index.mpd",
+  "keyId": "3afa887864e6545aa006db21aeb39054",
+  "key": "6b8cce271f3cd923d0df32d45b44f6df",
+  "category": "Sports"
+},
+  {
   "id": "Sony Ten 1 HD",
   "title": "Sony Ten 1 HD",
   "image": "https://jiotv.catchup.cdn.jio.com/dare_images/images/Ten_HD.png",
@@ -79,33 +106,6 @@
   "url": "https://jiotvpllive.cdn.jio.com/bpk-tv/Ten_4_Telugu_MOB/WDVLive/index.mpd",
   "keyId": "",
   "key": "",
-  "category": "Sports"
-},
-{
-  "id": "SonyLIV Sports 1",
-  "title": "SonyLIV Sports 1",
-  "image": "https://jiotv.catchup.cdn.jio.com/dare_images/images/SonyLIV_Sports_1.png",
-  "url": "https://jiotvpllive.cdn.jio.com/bpk-tv/SonyLIV_Sports_1_MOB/WDVLive/index.mpd",
-  "keyId": "4e4c5dba5bfe5a7c9338bc086eb80379",
-  "key": "b8e8932f440084e1d2b705fa52eef94b",
-  "category": "Sports"
-},
-{
-  "id": "SonyLIV Sports 2",
-  "title": "SonyLIV Sports 2",
-  "image": "https://jiotv.catchup.cdn.jio.com/dare_images/images/SonyLIV_Sports_2.png",
-  "url": "https://jiotvpllive.cdn.jio.com/bpk-tv/SonyLIV_Sports_2_MOB/WDVLive/index.mpd",
-  "keyId": "ef24516ae38b50d18049343cd1cd998a",
-  "key": "eb4810ec250a1795a0019dba7881ff45",
-  "category": "Sports"
-},
-{
-  "id": "SonyLIV Sports 3",
-  "title": "SonyLIV Sports 3",
-  "image": "https://jiotv.catchup.cdn.jio.com/dare_images/images/SonyLIV_Sports_3.png",
-  "url": "https://jiotvpllive.cdn.jio.com/bpk-tv/SonyLIV_Sports_3_MOB/WDVLive/index.mpd",
-  "keyId": "3afa887864e6545aa006db21aeb39054",
-  "key": "6b8cce271f3cd923d0df32d45b44f6df",
   "category": "Sports"
 },
 {
