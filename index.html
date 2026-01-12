@@ -10,170 +10,117 @@
 
 <style>
 :root {
-  --bg: #050509;
-  --border: rgba(255,255,255,.08);
-  --glass: rgba(255,255,255,.06);
-  --accent: #3b82f6;
-  --radius: 18px;
+  --bg:#050509;
+  --border:rgba(255,255,255,.08);
+  --radius:18px;
 }
 
-* {
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
-}
+* { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
 body {
-  margin: 0;
-  font-family: 'Inter', system-ui, sans-serif;
+  margin:0;
+  font-family:Inter,system-ui,sans-serif;
   background:
     radial-gradient(1200px 600px at top, #0b1020, transparent),
     radial-gradient(800px 400px at bottom, #020024, transparent),
     var(--bg);
-  color: #fff;
+  color:#fff;
 }
 
-/* ===== HEADER ===== */
+/* HEADER */
 header {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  background: rgba(5,5,9,.65);
-  backdrop-filter: blur(18px);
-  border-bottom: 1px solid var(--border);
+  position:sticky;
+  top:0;
+  z-index:20;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px 16px;
+  background:rgba(5,5,9,.65);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border);
 }
 
-header img {
-  height: 40px;
-}
+header img { height:40px; }
+header span { font-size:20px; font-weight:700; }
 
-header span {
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: .4px;
-}
-
-/* ===== MAIN ===== */
+/* MAIN */
 main {
-  padding: 14px;
-  max-width: 1600px;
-  margin: auto;
+  padding:14px;
+  max-width:1600px;
+  margin:auto;
 }
 
-/* ===== GRID ===== */
-.grid {
-  display: grid;
-  gap: 14px;
-}
+/* GRID */
+.grid { display:grid; gap:14px; }
+@media(max-width:600px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:601px) and (max-width:1024px){.grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1025px){.grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}}
 
-/* Mobile first */
-@media (max-width: 600px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* Tablet */
-@media (min-width: 601px) and (max-width: 1024px) {
-  .grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-/* Desktop */
-@media (min-width: 1025px) {
-  .grid {
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  }
-}
-
-/* ===== CARD ===== */
+/* CARD */
 .card {
-  position: relative;
-  background: linear-gradient(180deg, #101018, #07070c);
-  border-radius: var(--radius);
-  overflow: hidden;
-  border: 1px solid var(--border);
-  box-shadow: 0 10px 25px rgba(0,0,0,.55);
-  transition: transform .25s ease, box-shadow .25s ease;
-  cursor: pointer;
+  background:linear-gradient(180deg,#101018,#07070c);
+  border-radius:var(--radius);
+  overflow:hidden;
+  border:1px solid var(--border);
+  box-shadow:0 10px 25px rgba(0,0,0,.55);
+  transition:transform .25s ease;
+  cursor:pointer;
 }
+.card:active { transform:scale(.96); }
 
-/* Touch feedback */
-.card:active {
-  transform: scale(.96);
-}
-
-/* Hover (desktop only) */
-@media (hover:hover) {
-  .card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 28px 55px rgba(0,0,0,.85);
-  }
-}
-
-/* Accent glow */
-.card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: radial-gradient(
-    320px 140px at top,
-    rgba(59,130,246,.25),
-    transparent
-  );
-  opacity: 0;
-  transition: opacity .4s ease;
-  pointer-events: none;
-}
-
-@media (hover:hover) {
-  .card:hover::after {
-    opacity: 1;
-  }
-}
-
-/* ===== LOGO ===== */
 .logo {
-  height: 120px;
-  background: #fff;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  transition: transform .35s ease;
+  height:120px;
+  background:#fff center/contain no-repeat;
 }
 
-@media (hover:hover) {
-  .card:hover .logo {
-    transform: scale(1.1);
-  }
-}
-
-/* ===== TITLE ===== */
 .title {
-  padding: 10px 8px;
-  text-align: center;
-  font-size: 13px;
-  font-weight: 600;
-  background: rgba(0,0,0,.5);
-  backdrop-filter: blur(10px);
-  border-top: 1px solid var(--border);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  padding:10px 8px;
+  text-align:center;
+  font-size:13px;
+  font-weight:600;
+  background:rgba(0,0,0,.5);
+  border-top:1px solid var(--border);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
-/* ===== LOADING ===== */
+/* LOADING */
 .loading {
-  text-align: center;
-  padding: 60px 20px;
-  opacity: .75;
-  font-size: 14px;
-  letter-spacing: .4px;
+  text-align:center;
+  padding:60px 20px;
+  opacity:.75;
+  font-size:14px;
+}
+
+/* ===== MODAL PLAYER ===== */
+#playerModal {
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#000;
+  z-index:9999;
+}
+
+#playerFrame {
+  width:100%;
+  height:100%;
+  border:none;
+}
+
+#closeBtn {
+  position:absolute;
+  top:10px;
+  right:10px;
+  z-index:10000;
+  background:#000;
+  color:#fff;
+  border:none;
+  font-size:22px;
+  padding:6px 10px;
+  cursor:pointer;
+  border-radius:8px;
 }
 </style>
 </head>
@@ -190,6 +137,15 @@ main {
   <div id="channels" class="grid"></div>
 </main>
 
+<!-- MODAL PLAYER -->
+<div id="playerModal">
+  <button id="closeBtn" onclick="closePlayer()">✕</button>
+  <iframe
+    id="playerFrame"
+    allow="autoplay; encrypted-media; fullscreen; picture-in-picture">
+  </iframe>
+</div>
+
 <script>
 fetch('./channels.json')
   .then(res => res.json())
@@ -201,13 +157,7 @@ fetch('./channels.json')
       const card = document.createElement('div');
       card.className = 'card';
 
-      card.onclick = () => {
-        if (ch.id) {
-          location.href = `player.html?id=${ch.id}`;
-        } else {
-          location.href = `player.html?url=${encodeURIComponent(ch.url)}&keyId=${ch.keyId}&key=${ch.key}`;
-        }
-      };
+      card.onclick = () => openPlayer(ch);
 
       card.innerHTML = `
         <div class="logo" style="background-image:url('${ch.logo || ''}')"></div>
@@ -221,6 +171,24 @@ fetch('./channels.json')
     document.getElementById('loading').innerText = 'Failed to load channels';
     console.error(err);
   });
+
+function openPlayer(ch) {
+  const modal = document.getElementById('playerModal');
+  const frame = document.getElementById('playerFrame');
+
+  modal.style.display = 'block';
+
+  frame.src =
+    `s-mpd.html?url=${encodeURIComponent(ch.url)}&keyId=${ch.keyId}&key=${ch.key}`;
+}
+
+function closePlayer() {
+  const modal = document.getElementById('playerModal');
+  const frame = document.getElementById('playerFrame');
+
+  frame.src = '';
+  modal.style.display = 'none';
+}
 </script>
 
 </body>
