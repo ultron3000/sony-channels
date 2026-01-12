@@ -1,29 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Cloud TV</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloud TV – Sony</title>
 
-<link rel="icon" href="https://static.readdy.ai/image/0ece273271e400e488b9947cb1e99e9a/a79b6f32c71c4ee2094ead0eb9c84c9b.png" />
+<link rel="icon" href="https://static.readdy.ai/image/0ece273271e400e488b9947cb1e99e9a/a79b6f32c71c4ee2094ead0eb9c84c9b.png">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/controls.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/shaka-player.ui.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-:root {
-  --bg:#050509;
-  --border:rgba(255,255,255,.08);
-  --radius:18px;
-}
-
-* { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-
 body {
   margin:0;
-  font-family:Inter,system-ui,sans-serif;
-  background:
-    radial-gradient(1200px 600px at top, #0b1020, transparent),
-    radial-gradient(800px 400px at bottom, #020024, transparent),
-    var(--bg);
+  font-family:Inter,sans-serif;
+  background:#050509;
   color:#fff;
 }
 
@@ -31,70 +25,41 @@ body {
 header {
   position:sticky;
   top:0;
-  z-index:20;
+  z-index:10;
   display:flex;
   align-items:center;
   gap:12px;
-  padding:14px 16px;
-  background:rgba(5,5,9,.65);
-  backdrop-filter:blur(18px);
-  border-bottom:1px solid var(--border);
-}
-
-header img { height:40px; }
-header span { font-size:20px; font-weight:700; }
-
-/* MAIN */
-main {
   padding:14px;
-  max-width:1600px;
-  margin:auto;
+  background:#07070c;
 }
 
 /* GRID */
-.grid { display:grid; gap:14px; }
+.grid {
+  display:grid;
+  gap:14px;
+  padding:14px;
+}
 @media(max-width:600px){.grid{grid-template-columns:repeat(2,1fr)}}
-@media(min-width:601px) and (max-width:1024px){.grid{grid-template-columns:repeat(3,1fr)}}
-@media(min-width:1025px){.grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}}
+@media(min-width:601px){.grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}}
 
-/* CARD */
 .card {
-  background:linear-gradient(180deg,#101018,#07070c);
-  border-radius:var(--radius);
+  background:#0b0b12;
+  border-radius:18px;
   overflow:hidden;
-  border:1px solid var(--border);
-  box-shadow:0 10px 25px rgba(0,0,0,.55);
-  transition:transform .25s ease;
   cursor:pointer;
 }
-.card:active { transform:scale(.96); }
-
 .logo {
   height:120px;
   background:#fff center/contain no-repeat;
 }
-
 .title {
-  padding:10px 8px;
+  padding:8px;
   text-align:center;
   font-size:13px;
   font-weight:600;
-  background:rgba(0,0,0,.5);
-  border-top:1px solid var(--border);
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
 }
 
-/* LOADING */
-.loading {
-  text-align:center;
-  padding:60px 20px;
-  opacity:.75;
-  font-size:14px;
-}
-
-/* ===== MODAL PLAYER ===== */
+/* MODAL PLAYER */
 #playerModal {
   display:none;
   position:fixed;
@@ -103,24 +68,34 @@ main {
   z-index:9999;
 }
 
-#playerFrame {
+.shaka-video-container {
   width:100%;
-  height:100%;
-  border:none;
+  height:calc(100% - 70px);
 }
 
-#closeBtn {
-  position:absolute;
-  top:10px;
-  right:10px;
-  z-index:10000;
+video {
+  width:100%;
+  height:100%;
   background:#000;
+}
+
+/* CONTROLS */
+#controls {
+  height:70px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:12px;
+  background:#07070c;
+}
+
+.btn {
+  background:#111;
+  border:1px solid rgba(255,255,255,.15);
   color:#fff;
-  border:none;
-  font-size:22px;
-  padding:6px 10px;
+  padding:10px 14px;
+  border-radius:10px;
   cursor:pointer;
-  border-radius:8px;
 }
 </style>
 </head>
@@ -128,67 +103,110 @@ main {
 <body>
 
 <header>
-  <img src="https://static.readdy.ai/image/0ece273271e400e488b9947cb1e99e9a/a79b6f32c71c4ee2094ead0eb9c84c9b.png" alt="Cloud TV">
+  <img src="https://static.readdy.ai/image/0ece273271e400e488b9947cb1e99e9a/a79b6f32c71c4ee2094ead0eb9c84c9b.png" height="36">
   <span>Sony Channels</span>
 </header>
 
-<main>
-  <div id="loading" class="loading">Loading Sony channels…</div>
-  <div id="channels" class="grid"></div>
-</main>
+<div class="grid" id="channels"></div>
 
-<!-- MODAL PLAYER -->
+<!-- PLAYER MODAL -->
 <div id="playerModal">
-  <button id="closeBtn" onclick="closePlayer()">✕</button>
-  <iframe
-    id="playerFrame"
-    allow="autoplay; encrypted-media; fullscreen; picture-in-picture">
-  </iframe>
+  <div class="shaka-video-container" data-shaka-player>
+    <video id="video" autoplay muted playsinline></video>
+  </div>
+
+  <div id="controls">
+    <button id="prevBtn" class="btn"><i class="fas fa-step-backward"></i></button>
+    <button id="playPauseBtn" class="btn"><i class="fas fa-play"></i></button>
+    <button id="nextBtn" class="btn"><i class="fas fa-step-forward"></i></button>
+    <button id="muteBtn" class="btn"><i class="fas fa-volume-up"></i></button>
+    <button id="fullscreenBtn" class="btn"><i class="fas fa-expand"></i></button>
+    <button id="closeBtn" class="btn"><i class="fas fa-times"></i></button>
+  </div>
 </div>
 
 <script>
+let channels = [];
+let currentIndex = 0;
+let player, ui;
+
 fetch('./channels.json')
-  .then(res => res.json())
+  .then(r => r.json())
   .then(data => {
-    document.getElementById('loading').style.display = 'none';
-    const grid = document.getElementById('channels');
-
-    data.forEach(ch => {
-      const card = document.createElement('div');
-      card.className = 'card';
-
-      card.onclick = () => openPlayer(ch);
-
-      card.innerHTML = `
-        <div class="logo" style="background-image:url('${ch.logo || ''}')"></div>
-        <div class="title">${ch.title || 'Live Channel'}</div>
-      `;
-
-      grid.appendChild(card);
-    });
-  })
-  .catch(err => {
-    document.getElementById('loading').innerText = 'Failed to load channels';
-    console.error(err);
+    channels = data;
+    render();
   });
 
-function openPlayer(ch) {
-  const modal = document.getElementById('playerModal');
-  const frame = document.getElementById('playerFrame');
+function render() {
+  const grid = document.getElementById('channels');
+  grid.innerHTML = '';
+  channels.forEach((ch, i) => {
+    const c = document.createElement('div');
+    c.className = 'card';
+    c.innerHTML = `
+      <div class="logo" style="background-image:url('${ch.logo}')"></div>
+      <div class="title">${ch.title}</div>
+    `;
+    c.onclick = () => openPlayer(i);
+    grid.appendChild(c);
+  });
+}
 
-  modal.style.display = 'block';
+async function initPlayer() {
+  shaka.polyfill.installAll();
+  const video = document.getElementById('video');
+  player = new shaka.Player(video);
+  ui = new shaka.ui.Overlay(player, document.querySelector('.shaka-video-container'), video);
 
-  frame.src =
-    `s-mpd.html?url=${encodeURIComponent(ch.url)}&keyId=${ch.keyId}&key=${ch.key}`;
+  player.getNetworkingEngine().registerRequestFilter((type, request) => {
+    request.headers['Referer'] = 'https://www.jiotv.com/';
+    request.headers['User-Agent'] =
+      'plaYtv/7.1.5 (Linux;Android 13) ExoPlayerLib/2.11.6';
+  });
+}
+
+async function openPlayer(index) {
+  currentIndex = index;
+  document.getElementById('playerModal').style.display = 'block';
+
+  if (!player) await initPlayer();
+
+  const ch = channels[index];
+
+  player.configure({
+    drm: { clearKeys: { [ch.keyId]: ch.key } }
+  });
+
+  player.getNetworkingEngine().registerRequestFilter((type, request) => {
+    request.headers['Cookie'] = `__hdnea__=${ch.hdnea || ''}`;
+    if (!request.uris[0].includes('__hdnea__')) {
+      const sep = request.uris[0].includes('?') ? '&' : '?';
+      request.uris[0] += sep + `__hdnea__=${ch.hdnea || ''}`;
+    }
+  });
+
+  await player.load(ch.url);
+
+  const video = document.getElementById('video');
+  video.muted = false;
+  await video.play();
 }
 
 function closePlayer() {
-  const modal = document.getElementById('playerModal');
-  const frame = document.getElementById('playerFrame');
-
-  frame.src = '';
-  modal.style.display = 'none';
+  document.getElementById('playerModal').style.display = 'none';
+  document.getElementById('video').pause();
 }
+
+/* CONTROLS */
+playPauseBtn.onclick = () => {
+  const v = video;
+  v.paused ? v.play() : v.pause();
+};
+muteBtn.onclick = () => video.muted = !video.muted;
+fullscreenBtn.onclick = () => video.requestFullscreen();
+prevBtn.onclick = () => currentIndex > 0 && openPlayer(currentIndex - 1);
+nextBtn.onclick = () => currentIndex < channels.length - 1 && openPlayer(currentIndex + 1);
+closeBtn.onclick = closePlayer;
 </script>
 
 </body>
