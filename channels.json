@@ -27,6 +27,33 @@
   "category": "Sports"
 },
   {
+  "id": "Sony LIV Sports 4 Tamil",
+  "title": "Sony LIV Sports 4 Tamil",
+  "image": "https://jiotv.catchup.cdn.jio.com/dare_images/images/SonyLIV_Sports_4_Tamil.png",
+  "url": "https://jiotvpllive.cdn.jio.com/bpk-tv/SonyLIV_Sports_4_Tamil_MOB/WDVLive/index.mpd",
+  "keyId": "9f266ceda9555faf8b40c586ac40406a",
+  "key": "92f9a1ca4c16545db65ad0578bd1baa3",
+  "category": "Sports"
+},
+{
+  "id": "Sony LIV Sports 4 Telugu",
+  "title": "Sony LIV Sports 4 Telugu",
+  "image": "https://jiotv.catchup.cdn.jio.com/dare_images/images/SonyLIV_Sports_4_Telugu.png",
+  "url": "https://jiotvpllive.cdn.jio.com/bpk-tv/SonyLIV_Sports_4_Telugu_MOB/WDVLive/index.mpd",
+  "keyId": "4d39c423d72a5f1ca5df1de110c80422",
+  "key": "572a9370c22c8b5d741352ebf8f68721",
+  "category": "Sports"
+},
+{
+  "id": "Sony LIV Sports 5",
+  "title": "Sony LIV Sports 5",
+  "image": "https://jiotv.catchup.cdn.jio.com/dare_images/images/SonyLIV_Sports_5.png",
+  "url": "https://jiotvpllive.cdn.jio.com/bpk-tv/SonyLIV_Sports_5_MOB/WDVLive/index.mpd",
+  "keyId": "cee8550bf50b569d8ad2ed0c5264f0d2",
+  "key": "565a95f1c332c03534e1e5fcc1ff9a8b",
+  "category": "Sports"
+},
+  {
   "id": "Sony Ten 1 HD",
   "title": "Sony Ten 1 HD",
   "image": "https://jiotv.catchup.cdn.jio.com/dare_images/images/Ten_HD.png",
@@ -106,33 +133,6 @@
   "url": "https://jiotvpllive.cdn.jio.com/bpk-tv/Ten_4_Telugu_MOB/WDVLive/index.mpd",
   "keyId": "",
   "key": "",
-  "category": "Sports"
-},
-{
-  "id": "Sony LIV Sports 4 Tamil",
-  "title": "Sony LIV Sports 4 Tamil",
-  "image": "https://jiotv.catchup.cdn.jio.com/dare_images/images/SonyLIV_Sports_4_Tamil.png",
-  "url": "https://jiotvpllive.cdn.jio.com/bpk-tv/SonyLIV_Sports_4_Tamil_MOB/WDVLive/index.mpd",
-  "keyId": "9f266ceda9555faf8b40c586ac40406a",
-  "key": "92f9a1ca4c16545db65ad0578bd1baa3",
-  "category": "Sports"
-},
-{
-  "id": "Sony LIV Sports 4 Telugu",
-  "title": "Sony LIV Sports 4 Telugu",
-  "image": "https://jiotv.catchup.cdn.jio.com/dare_images/images/SonyLIV_Sports_4_Telugu.png",
-  "url": "https://jiotvpllive.cdn.jio.com/bpk-tv/SonyLIV_Sports_4_Telugu_MOB/WDVLive/index.mpd",
-  "keyId": "4d39c423d72a5f1ca5df1de110c80422",
-  "key": "572a9370c22c8b5d741352ebf8f68721",
-  "category": "Sports"
-},
-{
-  "id": "Sony LIV Sports 5",
-  "title": "Sony LIV Sports 5",
-  "image": "https://jiotv.catchup.cdn.jio.com/dare_images/images/SonyLIV_Sports_5.png",
-  "url": "https://jiotvpllive.cdn.jio.com/bpk-tv/SonyLIV_Sports_5_MOB/WDVLive/index.mpd",
-  "keyId": "cee8550bf50b569d8ad2ed0c5264f0d2",
-  "key": "565a95f1c332c03534e1e5fcc1ff9a8b",
   "category": "Sports"
 },
 {
